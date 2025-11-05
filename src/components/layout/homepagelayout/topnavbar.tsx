@@ -94,7 +94,7 @@ export default function TopNavbar({
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0 flex items-center ml-10">
             <img 
-              src="/src/assets/images/logo.png" 
+              src="/images/logo.png" 
               alt="SentriGas Logo" 
               className="h-14 w-auto"
             />

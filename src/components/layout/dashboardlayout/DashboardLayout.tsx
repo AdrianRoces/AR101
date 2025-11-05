@@ -39,13 +39,13 @@ export default function DashboardLayout({
   const menuItems = [
     {
       label: 'Settings',
-      icon: '/src/assets/images/settings.png',
+      icon: '/images/settings.png',
       onClick: onOpenSettings,
       hoverColor: 'hover:bg-teal-50'
     },
     {
       label: 'History',
-      icon: '/src/assets/images/history.png',
+      icon: '/images/history.png',
       onClick: onOpenHistory,
       hoverColor: 'hover:bg-yellow-50'
     }
@@ -57,7 +57,7 @@ export default function DashboardLayout({
       <aside className="hidden md:flex fixed top-5 left-5 bottom-6 w-64 bg-gray-50 rounded-3xl shadow-lg flex-col z-20">
         {/* Logo */}
         <div className="p-6 flex items-center space-x-3">
-          <img src="/src/assets/images/logo.png" alt="Logo" className="h-10 w-10" />
+          <img src="/images/logo.png" alt="Logo" className="h-10 w-10" />
           <h1 className="text-lg font-bold text-teal-600">SENTRI GAS</h1>
         </div>
 
@@ -137,7 +137,7 @@ export default function DashboardLayout({
       <header className="md:hidden fixed top-0 left-0 right-0 bg-gray-50 border-b border-gray-200 z-30">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-3">
-            <img src="/src/assets/images/logo.png" alt="Logo" className="h-8 w-8" />
+            <img src="/images/logo.png" alt="Logo" className="h-8 w-8" />
             <h1 className="text-base font-bold text-teal-600">SENTRI GAS</h1>
           </div>
           <button

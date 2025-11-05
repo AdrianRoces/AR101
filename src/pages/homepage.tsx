@@ -81,87 +81,87 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
       description: [
         "SentriGas is an IoT smart alarm that actively monitors for LPG leaks. It ensures safety by automatically isolating the gas supply and dispatching notifications instantly."
       ],
-      backgroundImage: "/src/assets/images/ESP32DevelopmentBoard.jpg"
+      backgroundImage: "/public/images/ESP32DevelopmentBoard.jpg"
     },
     mission: {
       title: "OUR MISSION",
       description: [
         "To monitor LPG leaks in real time, automatically turn off the gas supply, and notify users immediately via email and the web in order to reduce risks and prevent disaster."
       ],
-      imageUrl: "/src/assets/images/ESP32DevelopmentBoard.jpg"
+      imageUrl: "/public/images/ESP32DevelopmentBoard.jpg"
     },
     team: [
       {
         id: 1,
         name: "DECOLONGON",
         role: "CEO & Founder",
-        imageUrl: "/src/assets/images/decolongon.jpeg"
+        imageUrl: "/public/images/decolongon.jpeg"
       },
       {
         id: 2,
         name: "Roces, Adrian A.",
         role: "CTO",
-        imageUrl: "/src/assets/images/pfp.jpg"
+        imageUrl: "/public/images/pfp.jpg"
       },
       {
         id: 3,
         name: "PRINCESS",
         role: "Lead Engineer",
-        imageUrl: "/src/assets/images/princess.jpg"
+        imageUrl: "/public/images/princess.jpg"
       },
       {
         id: 4,
         name: "Emily Davis",
         role: "Product Manager",
-        imageUrl: "/src/assets/images/matias.jpg"
+        imageUrl: "/public/images/matias.jpg"
       },
       {
         id: 5,
         name: "David Wilson",
         role: "Hardware Specialist",
-        imageUrl: "/src/assets/images/argomido.png"
+        imageUrl: "/public/images/argomido.png"
       },
       {
         id: 6,
         name: "Lisa Brown",
         role: "Software Developer",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       },
       {
         id: 7,
         name: "Robert Taylor",
         role: "IoT Architect",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       },
       {
         id: 8,
         name: "Jennifer Martinez",
         role: "UX Designer",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       },
       {
         id: 9,
         name: "James Anderson",
         role: "Safety Engineer",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       },
       {
         id: 10,
         name: "Maria Garcia",
         role: "Data Analyst",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       },
       {
         id: 11,
         name: "Thomas Lee",
         role: "Operations Manager",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       },
       {
         id: 12,
         name: "Amanda White",
         role: "Marketing Director",
-        imageUrl: "/src/assets/images/posa.jpg"
+        imageUrl: "/public/images/posa.jpg"
       }
     ]
   };
@@ -178,7 +178,7 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
         id="home" 
         className="min-h-screen relative pt-16"
         style={{
-          backgroundImage: "url('/src/assets/images/heroimage.jpg')",
+          backgroundImage: "url('/images/heroimage.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -193,7 +193,7 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
             <div className="flex flex-col items-start space-y-6 sm:space-y-8 text-left">
               <div className="w-32 h-32 sm:w-48 sm:h-48 flex items-center justify-center mt-[-60px] sm:mt-[-120px]">
                 <img 
-                  src="/src/assets/images/logo.png" 
+                  src="/public/images/logo.png" 
                   alt="SentriGas Logo" 
                   className="w-full h-full object-contain"
                 />

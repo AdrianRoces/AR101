@@ -31,7 +31,7 @@ export default function WaterSpray({ status, manualMode, activeWaterSpray, onAct
         </button>
       </div>
       <div className="flex-1 flex items-center justify-center">
-        <img src="/src/assets/images/spray.png" alt="Spray" className="w-12 h-12 md:w-16 md:h-16" />
+        <img src="/images/spray.png" alt="Spray" className="w-12 h-12 md:w-16 md:h-16" />
       </div>
       <div className="flex justify-center">
         <span className={`text-lg md:text-xl font-semibold ${statusConfig[status]}`}>

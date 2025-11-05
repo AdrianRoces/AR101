@@ -37,7 +37,7 @@ export default function SolenoidValve({
       {/* Icon centered in the middle */}
       <div className="flex-1 flex items-center justify-center">
         <img 
-          src="/src/assets/images/valve.png" 
+          src="/images/valve.png" 
           alt="Solenoid Valve" 
           className="w-16 h-16 object-contain"
         />
