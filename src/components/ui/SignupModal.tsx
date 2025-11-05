@@ -9,10 +9,10 @@ interface SignupModalProps extends ModalProps {
 export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAuth, onOpenSignin }: SignupModalProps) {
   const [formData, setFormData] = useState<AuthFormData>({
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: '' // We'll keep this for type consistency but not use it
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -23,26 +23,34 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
       newErrors.email = 'Email is invalid';
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onAuthSuccess?.(formData);
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    
+    // Simulate API call for passwordless signup
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // For demo purposes, we'll consider any valid email as successful signup
+      const userData = {
+        email: formData.email,
+        name: formData.email.split('@')[0], // Simple name extraction for demo
+        token: 'demo-token-' + Date.now()
+      };
+      
+      console.log('Signup success with data:', userData);
+      onAuthSuccess?.(userData);
+      onClose();
+    } catch (error) {
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,6 +63,26 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      onGoogleAuth?.();
+      // After successful Google auth, this will be called
+      const userData = {
+        email: 'google-user@example.com',
+        name: 'Google User',
+        token: 'google-token-' + Date.now()
+      };
+      onAuthSuccess?.(userData);
+      onClose();
+    } catch (error) {
+      console.error('Google sign up error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="p-8">
@@ -63,57 +91,33 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-sm text-gray-600 text-center mb-4">
+            Enter your email to create an account with a magic link
+          </p>
+
           {/* Email Input */}
           <div>
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Enter your email"
               value={formData.email}
               onChange={handleInputChange}
               className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
               aria-label="Email"
               aria-invalid={!!errors.email}
+              disabled={isLoading}
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-          </div>
-
-          {/* Password Input */}
-          <div>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              aria-label="Password"
-              aria-invalid={!!errors.password}
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </div>
-
-          {/* Confirm Password Input */}
-          <div>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              aria-label="Confirm Password"
-              aria-invalid={!!errors.confirmPassword}
-            />
-            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
           </div>
 
           {/* Sign Up Button */}
           <button
             type="submit"
-            className="w-full h-12 bg-amber-500 text-white font-bold rounded-full hover:bg-amber-600 transition-colors mt-4"
+            disabled={isLoading}
+            className="w-full h-12 bg-amber-500 text-white font-bold rounded-full hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-4"
           >
-            Sign up
+            {isLoading ? 'Sending magic link...' : 'Send magic link'}
           </button>
         </form>
 
@@ -126,8 +130,9 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
 
         {/* Google Sign Up */}
         <button
-          onClick={onGoogleAuth}
-          className="w-full h-12 border border-gray-300 rounded-full flex items-center justify-center space-x-3 hover:bg-gray-50 transition-colors"
+          onClick={handleGoogleSignUp}
+          disabled={isLoading}
+          className="w-full h-12 border border-gray-300 rounded-full flex items-center justify-center space-x-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <GoogleIcon />
           <span>Sign up with Google</span>
@@ -142,6 +147,7 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
               onOpenSignin();
             }}
             className="text-amber-500 font-semibold hover:underline focus:outline-none focus:underline"
+            disabled={isLoading}
           >
             Sign in
           </button>

@@ -15,7 +15,7 @@ export default function SigninModal({
 }: SigninModalProps) {
   const [formData, setFormData] = useState<AuthFormData>({
     email: '',
-    password: ''
+    password: '' // Not used for passwordless, but kept for type consistency
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +29,6 @@ export default function SigninModal({
       newErrors.email = 'Email is invalid';
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -43,17 +39,18 @@ export default function SigninModal({
 
     setIsLoading(true);
     
-    // Simulate API call
+    // Simulate API call for passwordless signin
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, we'll consider any valid form as successful login
+      // For demo purposes, we'll consider any valid email as successful login
       const userData = {
         email: formData.email,
         name: formData.email.split('@')[0], // Simple name extraction for demo
         token: 'demo-token-' + Date.now()
       };
       
+      console.log('Signin success with data:', userData);
       onAuthSuccess?.(userData);
       onClose();
     } catch (error) {
@@ -100,12 +97,16 @@ export default function SigninModal({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-sm text-gray-600 text-center mb-4">
+            Enter your email to receive a magic link for instant sign in
+          </p>
+          
           {/* Email Input */}
           <div>
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Enter your email"
               value={formData.email}
               onChange={handleInputChange}
               className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
@@ -116,29 +117,13 @@ export default function SigninModal({
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
 
-          {/* Password Input */}
-          <div>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
-              aria-label="Password"
-              aria-invalid={!!errors.password}
-              disabled={isLoading}
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </div>
-
           {/* Sign In Button */}
           <button
             type="submit"
             disabled={isLoading}
             className="w-full h-12 bg-teal-400 text-white font-bold rounded-full hover:bg-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-4"
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {isLoading ? 'Sending magic link...' : 'Send magic link'}
           </button>
         </form>
 
@@ -159,17 +144,6 @@ export default function SigninModal({
           <span>Sign in with Google</span>
         </button>
 
-        {/* Forgot Password Link */}
-        <div className="text-center mt-4">
-          <button
-            type="button"
-            onClick={() => console.log('Forgot password clicked')}
-            className="text-sm text-teal-400 hover:underline focus:outline-none"
-          >
-            Forgot your password?
-          </button>
-        </div>
-
         {/* Footer */}
         <p className="text-center text-sm text-gray-600 mt-6">
           Don't have an account?{' '}
@@ -179,6 +153,7 @@ export default function SigninModal({
               onOpenSignup();
             }}
             className="text-teal-400 font-semibold hover:underline focus:outline-none focus:underline"
+            disabled={isLoading}
           >
             Sign up
           </button>

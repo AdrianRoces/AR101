@@ -16,3 +16,11 @@ export interface FormErrors {
   password?: string;
   confirmPassword?: string;
 }
+
+export interface SigninModalProps extends ModalProps {
+  onOpenSignup: () => void;
+}
+
+export interface SignupModalProps extends ModalProps {
+  onOpenSignin: () => void;
+}
