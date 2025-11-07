@@ -15,12 +15,12 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({
 }) => {
   return (
     <div 
-      className="bg-white rounded-lg shadow-lg p-0 text-left transform transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in-up relative overflow-hidden group"
+      className="bg-white rounded-lg shadow-lg p-0 text-left transform transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in-up relative overflow-hidden group w-full max-w-xs mx-auto"
       style={{ 
         animationDelay: `${animationDelay}ms`
       }}
     >
-      <div className="w-full h-40 sm:h-48 md:h-52 overflow-hidden">
+      <div className="w-full aspect-square overflow-hidden">
         {imageUrl ? (
           <img 
             src={imageUrl} 
@@ -34,12 +34,12 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({
         )}
       </div>
       
-      <div className="p-3 sm:p-4">
-        <div className="text-teal-600 font-semibold mb-1 sm:mb-2 text-xs uppercase tracking-wide">
+      <div className="p-4">
+        <div className="text-teal-600 font-semibold mb-2 text-xs uppercase tracking-wide line-clamp-2">
           {role}
         </div>
         
-        <div className="text-gray-900 font-bold text-sm sm:text-base leading-tight">
+        <div className="text-gray-900 font-bold text-sm leading-tight line-clamp-2">
           {name}
         </div>
       </div>

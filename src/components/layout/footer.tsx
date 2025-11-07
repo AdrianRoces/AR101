@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <img 
-                src="/src/assets/images/logo.png" 
+                src="/images/logo.png" 
                 alt="SentriGas Logo" 
                 className="w-8 h-8 object-contain"
               />

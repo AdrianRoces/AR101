@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Modal from './Modal';
+import ConfirmationModal from './ConfirmationModals';
 import type { ModalProps, AuthFormData, FormErrors } from '../../types/modal';
+import type { ConfirmationType, ActionType } from './ConfirmationModals';
 
 interface SignupModalProps extends ModalProps {
   onOpenSignin: () => void;
@@ -9,10 +11,13 @@ interface SignupModalProps extends ModalProps {
 export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAuth, onOpenSignin }: SignupModalProps) {
   const [formData, setFormData] = useState<AuthFormData>({
     email: '',
-    password: '' // We'll keep this for type consistency but not use it
+    password: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationType, setConfirmationType] = useState<ConfirmationType>('success');
+  const [confirmationAction, setConfirmationAction] = useState<ActionType>('signup');
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -27,28 +32,46 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
     return Object.keys(newErrors).length === 0;
   };
 
+  const showConfirmationMessage = (type: ConfirmationType, action: ActionType) => {
+    setConfirmationType(type);
+    setConfirmationAction(action);
+    setShowConfirmation(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setIsLoading(true);
     
-    // Simulate API call for passwordless signup
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, we'll consider any valid email as successful signup
-      const userData = {
-        email: formData.email,
-        name: formData.email.split('@')[0], // Simple name extraction for demo
-        token: 'demo-token-' + Date.now()
-      };
+      // Simulate API call - 90% success rate for demo
+      const isSuccess = Math.random() > 0.1;
       
-      console.log('Signup success with data:', userData);
-      onAuthSuccess?.(userData);
-      onClose();
+      if (isSuccess) {
+        const userData = {
+          email: formData.email,
+          name: formData.email.split('@')[0],
+          token: 'demo-token-' + Date.now()
+        };
+        
+        console.log('Signup success with data:', userData);
+        showConfirmationMessage('success', 'signup');
+        
+        // Close modals and trigger success after a delay
+        setTimeout(() => {
+          onAuthSuccess?.(userData);
+          onClose();
+          setFormData({ email: '', password: '' });
+        }, 2000);
+      } else {
+        showConfirmationMessage('error', 'signup');
+      }
     } catch (error) {
       console.error('Signup error:', error);
+      showConfirmationMessage('error', 'signup');
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +80,6 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
@@ -67,97 +89,111 @@ export default function SignupModal({ isOpen, onClose, onAuthSuccess, onGoogleAu
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      onGoogleAuth?.();
-      // After successful Google auth, this will be called
-      const userData = {
-        email: 'google-user@example.com',
-        name: 'Google User',
-        token: 'google-token-' + Date.now()
-      };
-      onAuthSuccess?.(userData);
-      onClose();
+      
+      // Simulate Google auth - 95% success rate for demo
+      const isSuccess = Math.random() > 0.05;
+      
+      if (isSuccess) {
+        onGoogleAuth?.();
+        const userData = {
+          email: 'google-user@example.com',
+          name: 'Google User',
+          token: 'google-token-' + Date.now()
+        };
+        showConfirmationMessage('success', 'signup');
+        
+        setTimeout(() => {
+          onAuthSuccess?.(userData);
+          onClose();
+        }, 2000);
+      } else {
+        showConfirmationMessage('error', 'signup');
+      }
     } catch (error) {
       console.error('Google sign up error:', error);
+      showConfirmationMessage('error', 'signup');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="p-8">
-        {/* Header */}
-        <h2 className="text-4xl font-bold text-amber-500 mb-8">Sign up</h2>
+    <>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <div className="p-8">
+          <h2 className="text-4xl font-bold text-amber-500 mb-8">Sign up</h2>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <p className="text-sm text-gray-600 text-center mb-4">
-            Enter your email to create an account with a magic link
-          </p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <p className="text-sm text-gray-600 text-center mb-4">
+              Enter your email to create an account with a magic link
+            </p>
 
-          {/* Email Input */}
-          <div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              aria-label="Email"
-              aria-invalid={!!errors.email}
+            <div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                aria-label="Email"
+                aria-invalid={!!errors.email}
+                disabled={isLoading}
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+
+            <button
+              type="submit"
               disabled={isLoading}
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              className="w-full h-12 bg-amber-500 text-white font-bold rounded-full hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-4"
+            >
+              {isLoading ? 'Sending magic link...' : 'Send magic link'}
+            </button>
+          </form>
+
+          <div className="flex items-center my-6">
+            <div className="flex-1 h-[1px] bg-gray-300"></div>
+            <span className="px-4 text-sm text-gray-500">or</span>
+            <div className="flex-1 h-[1px] bg-gray-300"></div>
           </div>
 
-          {/* Sign Up Button */}
           <button
-            type="submit"
+            onClick={handleGoogleSignUp}
             disabled={isLoading}
-            className="w-full h-12 bg-amber-500 text-white font-bold rounded-full hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-4"
+            className="w-full h-12 border border-gray-300 rounded-full flex items-center justify-center space-x-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isLoading ? 'Sending magic link...' : 'Send magic link'}
+            <GoogleIcon />
+            <span>Sign up with Google</span>
           </button>
-        </form>
 
-        {/* Divider */}
-        <div className="flex items-center my-6">
-          <div className="flex-1 h-[1px] bg-gray-300"></div>
-          <span className="px-4 text-sm text-gray-500">or</span>
-          <div className="flex-1 h-[1px] bg-gray-300"></div>
+          <p className="text-center text-sm text-gray-600 mt-6">
+            Already have an account?{' '}
+            <button
+              onClick={() => {
+                onClose();
+                onOpenSignin();
+              }}
+              className="text-amber-500 font-semibold hover:underline focus:outline-none focus:underline"
+              disabled={isLoading}
+            >
+              Sign in
+            </button>
+          </p>
         </div>
+      </Modal>
 
-        {/* Google Sign Up */}
-        <button
-          onClick={handleGoogleSignUp}
-          disabled={isLoading}
-          className="w-full h-12 border border-gray-300 rounded-full flex items-center justify-center space-x-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <GoogleIcon />
-          <span>Sign up with Google</span>
-        </button>
-
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Already have an account?{' '}
-          <button
-            onClick={() => {
-              onClose();
-              onOpenSignin();
-            }}
-            className="text-amber-500 font-semibold hover:underline focus:outline-none focus:underline"
-            disabled={isLoading}
-          >
-            Sign in
-          </button>
-        </p>
-      </div>
-    </Modal>
+      <ConfirmationModal
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        type={confirmationType}
+        action={confirmationAction}
+      />
+    </>
   );
 }
 
-// Google Icon SVG
+// Google Icon SVG remains the same
 const GoogleIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24">
     <path

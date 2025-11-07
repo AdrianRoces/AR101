@@ -14,13 +14,20 @@ interface HomepageProps {
   onLogout: () => void;
   isLoggedIn: boolean;
   userData: any;
+  autoOpenSignup?: boolean;
+  onAutoOpenSignupComplete?: () => void;
 }
 
-export default function Homepage({ onAuthSuccess }: HomepageProps) {
+export default function Homepage({ 
+  onAuthSuccess, 
+  autoOpenSignup = false, 
+  onAutoOpenSignupComplete 
+}: HomepageProps) {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isSigninOpen, setIsSigninOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleTeamCards, setVisibleTeamCards] = useState<boolean[]>([]);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   
   const teamSectionRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +35,22 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
     setIsVisible(true);
     // Initialize all team cards as not visible
     setVisibleTeamCards(new Array(12).fill(false));
+
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    // Auto open signup modal if coming from guide page
+    if (autoOpenSignup) {
+      setIsSignupOpen(true);
+      onAutoOpenSignupComplete?.();
+    }
+  }, [autoOpenSignup, onAutoOpenSignupComplete]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -81,90 +103,99 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
       description: [
         "SentriGas is an IoT smart alarm that actively monitors for LPG leaks. It ensures safety by automatically isolating the gas supply and dispatching notifications instantly."
       ],
-      backgroundImage: "/images/ESP32DevelopmentBoard.jpg"
+      backgroundImage: "/images/cover.jfif"
     },
     mission: {
       title: "OUR MISSION",
       description: [
         "To monitor LPG leaks in real time, automatically turn off the gas supply, and notify users immediately via email and the web in order to reduce risks and prevent disaster."
       ],
-      imageUrl: "/images/ESP32DevelopmentBoard.jpg"
+      imageUrl: "/images/posa.jpg"
     },
     team: [
+      // First row (5 cards)
       {
         id: 1,
-        name: "DECOLONGON",
-        role: "CEO & Founder",
-        imageUrl: "/images/decolongon.jpeg"
+        name: "Matias, Dominiq James B.",
+        role: "Product Manager",
+        imageUrl: "/images/matias.jpg",
+        isLarge: true
       },
       {
         id: 2,
-        name: "Roces, Adrian A.",
-        role: "CTO",
-        imageUrl: "/images/pfp.jpg"
-      },
-      {
-        id: 3,
-        name: "PRINCESS",
-        role: "Lead Engineer",
-        imageUrl: "/images/princess.jpg"
-      },
-      {
-        id: 4,
-        name: "Emily Davis",
-        role: "Product Manager",
-        imageUrl: "/images/matias.jpg"
-      },
-      {
-        id: 5,
-        name: "David Wilson",
-        role: "Hardware Specialist",
+        name: "Argomido Jr., Marlito N.",
+        role: "Lead Documentation Specialist",
         imageUrl: "/images/argomido.png"
       },
       {
+        id: 3,
+        name: "Pitel, John Kenneth P.",
+        role: "Backend Developer & UI/UX Designer",
+        imageUrl: "/images/pitel.jpg"
+      },
+      {
+        id: 4,
+        name: "Roces, Adrian A.",
+        role: "Frontend Developer & UI/UX Designer",
+        imageUrl: "/images/roces.jpg"
+      },
+      {
+        id: 5,
+        name: "Bacquial, Princess Ann S.",
+        role: "UI/UX Designer & Documentation",
+        imageUrl: "/images/bacquial.jpg"
+      },
+      // Second row (5 cards) - Alphabetical documentation
+      {
         id: 6,
-        name: "Lisa Brown",
-        role: "Software Developer",
-        imageUrl: "/images/posa.jpg"
+        name: "Amistoso, Josmar C.",
+        role: "Technical Documentation",
+        imageUrl: "/images/amistoso.jpg"
       },
       {
         id: 7,
-        name: "Robert Taylor",
-        role: "IoT Architect",
-        imageUrl: "/images/posa.jpg"
+        name: "Bendico, Liester",
+        role: "Technical Documentation",
+        imageUrl: "/images/bendico.png"
       },
       {
         id: 8,
-        name: "Jennifer Martinez",
-        role: "UX Designer",
-        imageUrl: "/images/posa.jpg"
+        name: "Decolongon, Marc Andrae P.",
+        role: "Technical Documentation",
+        imageUrl: "/images/decolongon.jpeg"
       },
       {
         id: 9,
-        name: "James Anderson",
-        role: "Safety Engineer",
-        imageUrl: "/images/posa.jpg"
+        name: "Gueriña, Brianah Nicole",
+        role: "Technical Documentation",
+        imageUrl: "/images/gerina.jpg"
       },
       {
         id: 10,
-        name: "Maria Garcia",
-        role: "Data Analyst",
-        imageUrl: "/images/posa.jpg"
+        name: "Paano, Khylle A.",
+        role: "Technical Documentation",
+        imageUrl: "/images/paano.jpg"
       },
+      // Third row (2 cards) - Alphabetical documentation
       {
         id: 11,
-        name: "Thomas Lee",
-        role: "Operations Manager",
-        imageUrl: "/images/posa.jpg"
+        name: "Payang, Chester Kirby V.",
+        role: "Technical Documentation",
+        imageUrl: "/images/payang.png"
       },
       {
         id: 12,
-        name: "Amanda White",
-        role: "Marketing Director",
-        imageUrl: "/images/posa.jpg"
+        name: "Valle, Ruzzel A.",
+        role: "Technical Documentation",
+        imageUrl: "/images/valle.png"
       }
     ]
   };
+
+  // First 10 team members for the 5x2 grid
+  const firstTenTeamMembers = aboutData.team.slice(0, 10);
+  // Last 2 team members for special placement
+  const lastTwoTeamMembers = aboutData.team.slice(10);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -191,7 +222,7 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
             <div className="flex flex-col items-start space-y-6 sm:space-y-8 text-left">
-              <div className="w-32 h-32 sm:w-48 sm:h-48 flex items-center justify-center mt-[-60px] sm:mt-[-120px]">
+              <div className="w-60 h-60 sm:w-48 sm:h-48 flex items-center justify-center ml-[-50px] mt-[-200px] sm:mt-[-120px]">
                 <img 
                   src="/images/logo.png" 
                   alt="SentriGas Logo" 
@@ -227,18 +258,15 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
       </section>
 
       <div className="relative z-30 bg-white">
-        {/* Hardware Section - Remove animation wrapper to make it visible */}
         <HardwareSection />
 
         <section id="about" className="relative">
-          {/* About Cover - Remove animation wrapper */}
           <AboutCover 
             title={aboutData.cover.title}
             description={aboutData.cover.description}
             backgroundImage={aboutData.cover.backgroundImage}
           />
 
-          {/* Mission Section - Remove animation wrapper */}
           <div className="py-12 sm:py-20 bg-white">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <MissionSection 
@@ -249,7 +277,6 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
             </div>
           </div>
 
-          {/* Team Section with scroll-triggered animations */}
           <div className="py-12 sm:py-20 bg-gray-50" ref={teamSectionRef}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-8 sm:mb-16">
@@ -259,17 +286,73 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 justify-items-center px-2 sm:px-0">
-                {aboutData.team.map((member, index) => (
+              {/* First 10 team members in 1 column on mobile, 5 columns on large screens */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 justify-items-center px-2 sm:px-0 mb-12">
+                {firstTenTeamMembers.map((member, index) => (
                   <div
                     key={member.id}
                     className={`transition-all duration-500 transform ${
                       visibleTeamCards[index] 
                         ? 'opacity-100 translate-y-0 scale-100' 
                         : 'opacity-0 translate-y-8 scale-95'
-                    }`}
+                    } ${member.isLarge ? 'w-full max-w-[220px]' : 'w-full max-w-[200px]'}`}
                     style={{
                       transitionDelay: visibleTeamCards[index] ? `${index * 100}ms` : '0ms'
+                    }}
+                  >
+                    {member.isLarge ? (
+                      // Slightly bigger PM card
+                      <div className="bg-white rounded-lg shadow-lg p-0 text-left transform transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in-up relative overflow-hidden group w-full mx-auto">
+                        <div className="w-full aspect-square overflow-hidden">
+                          {member.imageUrl ? (
+                            <img 
+                              src={member.imageUrl} 
+                              alt={member.name}
+                              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center">
+                              <span className="text-white font-semibold text-xs sm:text-sm">Team Member</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="p-4">
+                          <div className="text-teal-600 font-semibold mb-2 text-sm uppercase tracking-wide line-clamp-2">
+                            {member.role}
+                          </div>
+                          
+                          <div className="text-gray-900 font-bold text-base leading-tight line-clamp-2">
+                            {member.name}
+                          </div>
+                        </div>
+
+                        <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-teal-500 to-blue-500 group-hover:w-full transition-all duration-300"></div>
+                      </div>
+                    ) : (
+                      // Normal team member card
+                      <TeamMemberCard
+                        name={member.name}
+                        role={member.role}
+                        imageUrl={member.imageUrl}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Last 2 team members centered below - 1 column on mobile */}
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-12 px-2 sm:px-0">
+                {lastTwoTeamMembers.map((member, index) => (
+                  <div
+                    key={member.id}
+                    className={`w-full max-w-[200px] transition-all duration-500 transform ${
+                      visibleTeamCards[index + 10] 
+                        ? 'opacity-100 translate-y-0 scale-100' 
+                        : 'opacity-0 translate-y-8 scale-95'
+                    }`}
+                    style={{
+                      transitionDelay: visibleTeamCards[index + 10] ? `${(index + 10) * 100}ms` : '0ms'
                     }}
                   >
                     <TeamMemberCard
@@ -284,10 +367,10 @@ export default function Homepage({ onAuthSuccess }: HomepageProps) {
           </div>
         </section>
 
-        {/* Footer - Remove animation wrapper */}
         <Footer />
 
-        <BackToTopButton onClick={scrollToTop} />
+        {/* Back to Top Button */}
+        {showBackToTop && <BackToTopButton onClick={scrollToTop} />}
       </div>
 
       <SignupModal
