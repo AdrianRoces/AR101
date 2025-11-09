@@ -117,7 +117,7 @@ export default function Homepage({
       {
         id: 1,
         name: "Matias, Dominiq James B.",
-        role: "Product Manager",
+        role: "Project Manager",
         imageUrl: "/images/matias.jpg",
         isLarge: true
       },

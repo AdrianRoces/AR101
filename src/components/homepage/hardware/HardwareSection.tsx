@@ -21,11 +21,6 @@ const HardwareSection: React.FC = () => {
       imageUrl: "/images/Charging Module TP4056 (USB-C).jpg"
     },
     {
-      title: "Step-Up Converter (Boost)",
-      description: "Increases battery voltage to power 5V+ components, enabling low-voltage batteries to run higher-power devices.",
-      imageUrl: "/images/Step-Up Converter (Boost).jpg"
-    },
-    {
       title: "Relay Module (4-Channel)",
       description: "Electronic switch for controlling high-power devices safely, isolating low-voltage circuits from high-voltage loads.",
       imageUrl: "/images/Relay Module (4-Channel).jpg"
@@ -79,6 +74,15 @@ const HardwareSection: React.FC = () => {
             title="MQ-2 Gas Sensor"
             description="The MQ-2 gas sensor detects the presence of combustible gases such as smoke, propane, methane, and LPG. It continuously monitors air quality to provide early warnings of gas leaks. This enhances safety by preventing fire and explosion risks in various environments."
             imageUrl="/images/MQ2GasSensor-.jpg"
+            imagePosition="left"
+          />
+        </div>
+
+        <div className="mb-8 sm:mb-12 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+          <HardwareCard
+            title="Voltage Detection Sensor Module 25V"
+            description="Designed to measure input voltages up to 25 volts and output a scaled-down analog voltage suitable for microcontrollers like Arduino or Raspberry Pi. It uses a simple voltage divider circuit to safely monitor higher voltages while protecting the microcontroller’s analog input pins. This module is ideal for battery monitoring, power supply measurement, and electronic project applications."
+            imageUrl="/images/voltagedetector.webp"
             imagePosition="left"
           />
         </div>
